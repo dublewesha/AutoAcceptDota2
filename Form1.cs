@@ -10,7 +10,7 @@ using System.Windows.Forms;
 namespace AutoAcceptDota2
 {
     public partial class Form1 : Form
-    {//
+    {//test upload 
         readonly Point pixel_at_accept_button = new Point { X = 810, Y = 526 };
         readonly Color accept_button_color = Color.FromArgb(255, 50, 76, 67);
         bool RunStatus = false;
