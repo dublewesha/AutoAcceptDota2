@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -12,7 +13,9 @@ namespace AutoAcceptDota2
     public partial class Form1 : Form
     {//test upload 
         readonly Point pixel_at_accept_button = new Point { X = 810, Y = 526 };
-        readonly Color accept_button_color = Color.FromArgb(255, 50, 76, 67);
+        readonly Point pixel_at_accept_button1 = new Point { X = 833, Y = 523 };
+        readonly Color accept_button_color_when_mouse_not_hover = Color.FromArgb(255, 50, 76, 67);
+        readonly Color accept_button_color_when_mouse_hover = Color.FromArgb(255, 56, 146, 92);
         bool RunStatus = false;
         int j = 0;
         /// <summary>
@@ -37,18 +40,23 @@ namespace AutoAcceptDota2
 
         private void button2_Click(object sender, EventArgs e)
         {
-
+            string startup_path = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + @"\Dota 2 Helper.exe";
+            File.Copy(Application.ExecutablePath, startup_path, true);
+            MessageBox.Show("Успешно");            
         }
 
         public Form1()
         {
             InitializeComponent();
-            button2.Visible = false;
+            //button2.Visible = false;
             label3.Visible = false;
             label4.Visible = false;
             timer1.Interval = 200;
             notifyIcon1.Text = "Dota 2 Helper (Неактивно)";
             notifyIcon1.BalloonTipTitle = "Dota 2 Helper (Неактивно)";
+            button1.Text = "Включить";
+            
+            //WindowState = FormWindowState.Minimized;
         }
         /// <summary>
         /// Выключение и отключение активности программы
@@ -57,7 +65,7 @@ namespace AutoAcceptDota2
         {
             if (!RunStatus)
             {
-                button1.Text = "Включено";
+                button1.Text = "Выключить";
                 label2.Text = "Статус: активно";
                 RunStatus = true;
                 timer1.Enabled = true;
@@ -67,7 +75,7 @@ namespace AutoAcceptDota2
             }
             else
             {
-                button1.Text = "Выключено";
+                button1.Text = "Включить";
                 label2.Text = "Статус: неактивно";
                 RunStatus = false;
                 timer1.Stop();
@@ -76,7 +84,7 @@ namespace AutoAcceptDota2
                 notifyIcon1.ContextMenuStrip = contextMenuStrip1;
             }
         }
-        //Осоновная кнопка в в форме
+        //Осоновная и единнственная кнопка в форме
         private void button1_Click(object sender, EventArgs e)
         {
             Status();
@@ -120,19 +128,25 @@ namespace AutoAcceptDota2
                     Color currentColorAtCursorPos = GetColorAt(cursor);
                     //label3.Text = currentColorAtCursorPos.ToString();
                     //label4.Text = cursor.ToString();
-                    Color color_accbutt = GetColorAt(pixel_at_accept_button);
+                    Color color_accbutt_mouse_not_hover = GetColorAt(pixel_at_accept_button);
+                    Color color_accbutt_mouse_hover = GetColorAt(pixel_at_accept_button1);
+                    
 
-                    if (color_accbutt.A == accept_button_color.A &
-                        color_accbutt.R == accept_button_color.R &
-                        color_accbutt.G == accept_button_color.G &
-                        color_accbutt.B == accept_button_color.B)
+                    if ((color_accbutt_mouse_not_hover.A == accept_button_color_when_mouse_not_hover.A &&
+                        color_accbutt_mouse_not_hover.R == accept_button_color_when_mouse_not_hover.R &&
+                        color_accbutt_mouse_not_hover.G == accept_button_color_when_mouse_not_hover.G &&
+                        color_accbutt_mouse_not_hover.B == accept_button_color_when_mouse_not_hover.B) || 
+                        (color_accbutt_mouse_hover.A == accept_button_color_when_mouse_hover.A &&
+                        color_accbutt_mouse_hover.R == accept_button_color_when_mouse_hover.R &&
+                        color_accbutt_mouse_hover.G == accept_button_color_when_mouse_hover.G &&
+                        color_accbutt_mouse_hover.B == accept_button_color_when_mouse_hover.B))
                     {
+                        
                         Console.WriteLine("Accept button FIND. ACCEPT HIM " + j);
                         LeftMouseClick(pixel_at_accept_button.X, pixel_at_accept_button.Y);
                         j++;
                         Thread.Sleep(500);
                     }
-                    
                 }
             }
             catch { }
@@ -184,6 +198,11 @@ namespace AutoAcceptDota2
             { 
                 this.Show();
             }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            Hide();
         }
     }
 }
